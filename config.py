@@ -1,0 +1,2 @@
+MONGODB_USERNAME = "nico"
+MONGODB_PASSWORD = "Codametrix1000!"
