@@ -1,7 +1,7 @@
 import os
 import shutil
 import json
-from .CA.classifier import run_classification
+from ..CA.classifier import run_classification
 from datetime import datetime
 
 # Define the global variables for the data.json file path and filter preferences file
