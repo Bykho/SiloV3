@@ -4,7 +4,7 @@ from datetime import datetime
 from config import MONGODB_USERNAME, MONGODB_PASSWORD
 
 # MongoDB Atlas connection string
-MONGODB_CONNECTION_STRING = f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@silov2-1stcluster.m6deilx.mongodb.net/?retryWrites=true&w=majority&appName=SiloV2-1stCluster"
+MONGODB_CONNECTION_STRING = f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@silov3-1stcluster.m6deilx.mongodb.net/?retryWrites=true&w=majority&appName=SiloV3-1stCluster"
 
 # Connect to MongoDB Atlas
 client = MongoClient(MONGODB_CONNECTION_STRING)
@@ -28,5 +28,5 @@ def beam_to_cloud(folder_path):
 
 if __name__ == "__main__":
     # Path to the SH folder
-    folder_path = os.path.expanduser("~/Desktop/SiloV2/SH")
+    folder_path = os.path.expanduser("~/Desktop/SiloV3/SH")
     beam_to_cloud(folder_path)
