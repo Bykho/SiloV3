@@ -58,5 +58,5 @@ def main(input_directory):
             print("=" * 50)  # Separator for clarity
 
 if __name__ == "__main__":
-    input_directory = os.path.join(os.path.expanduser("~/Desktop"), "SiloV2/SH")
+    input_directory = os.path.join(os.path.expanduser("~/Desktop"), "SiloV3/SH")
     main(input_directory)

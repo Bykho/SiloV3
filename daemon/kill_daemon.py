@@ -2,7 +2,7 @@ import os
 import signal
 
 def stop_daemon():
-    lock_file = "/tmp/silov2_daemon.lock"
+    lock_file = "/tmp/silov3_daemon.lock"
     if os.path.exists(lock_file):
         with open(lock_file, "r") as f:
             pid = int(f.read().strip())

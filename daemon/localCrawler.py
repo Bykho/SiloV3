@@ -1,11 +1,11 @@
 import os
 import shutil
 import json
-from classifier import run_classification
+from .CA.classifier import run_classification
 from datetime import datetime
 
 # Define the global variables for the data.json file path and filter preferences file
-DATA_FILE = os.path.join(os.path.expanduser("~/Desktop/SiloV2"), "data.json")
+DATA_FILE = os.path.join(os.path.expanduser("~/Desktop/SiloV3"), "data.json")
 FILTER_PREFERENCES = os.path.join(os.path.dirname(__file__), "filter_preferences.json")
 
 # Define a function to crawl through the desktop directory
@@ -33,7 +33,7 @@ def crawl_desktop():
                 
                 if classification_result in CLASSES_TO_FILTER:
                     # Duplicate the file before moving it
-                    dest_path = os.path.join(root, "SiloV2", "SH", file_name)
+                    dest_path = os.path.join(root, "SiloV3", "SH", file_name)
                     shutil.copy2(src_path, dest_path)
                     print(f"File was classified as {classification_result}, preferences are {CLASSES_TO_FILTER}")
                     print(f"Duplicated: {file_name} to {dest_path}")

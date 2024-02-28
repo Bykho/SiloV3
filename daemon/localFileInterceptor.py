@@ -4,6 +4,7 @@ import json
 import subprocess
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../CA')))
 from classifier import run_classification
 from datetime import datetime
 import signal
@@ -11,9 +12,9 @@ import sys
 import psutil
 
 # Define the global variables
-DATA_FILE = os.path.join(os.path.expanduser("~/Desktop/SiloV2"), "data.json")
+DATA_FILE = os.path.join(os.path.expanduser("~/Desktop/SiloV3"), "data.json")
 FILTER_PREFERENCES = os.path.join(os.path.dirname(__file__), "filter_preferences.json")
-LOCK_FILE = "/tmp/silov2_daemon.lock"
+LOCK_FILE = "/tmp/silov3_daemon.lock"
 
 class FileHandler(FileSystemEventHandler):
     def __init__(self, src_dir, dest_dir, data_file):
@@ -124,7 +125,7 @@ def is_process_active(pid):
 
 def main():
     desktop_dir = os.path.expanduser("~/Desktop")
-    copied_file_folder = os.path.join(desktop_dir, "SiloV2/SH")
+    copied_file_folder = os.path.join(desktop_dir, "SiloV3/SH")
 
     # Stop and delete the previous daemon
     stop_and_delete_previous_daemon()
