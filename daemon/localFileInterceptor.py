@@ -4,8 +4,7 @@ import json
 import subprocess
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../CA')))
-from classifier import run_classification
+from ..CA.classifier import run_classification
 from datetime import datetime
 import signal
 import sys
@@ -48,7 +47,7 @@ class FileHandler(FileSystemEventHandler):
             # After moving the file, classify it
             classification_result = run_classification(src_path)
             if classification_result in CLASSES_TO_FILTER:
-                # Duplicate the file before moving it. This duplicates src_path and then lands it in dest_path
+                # Duplicate the file before moving it. This duplicates the file at src_path and then lands it in dest_path
                 shutil.copy2(src_path, dest_path)
                 # shutil.move(src_path, dest_path)
                 print(f"File was classified as {classification_result}, preferences are {CLASSES_TO_FILTER}")
@@ -142,6 +141,8 @@ def main():
     observer.schedule(event_handler, path=desktop_dir, recursive=False)
     observer.start()
 
+
+    #LINK UP THE SILO DOT DISPLAY WITH BELOW.
     try:
         display_process = subprocess.Popen(["python3", os.path.join(os.path.dirname(__file__), "display.py")])
 

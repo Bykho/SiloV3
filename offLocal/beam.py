@@ -3,7 +3,7 @@ from pymongo import MongoClient
 from datetime import datetime
 from config import MONGODB_USERNAME, MONGODB_PASSWORD
 
-# MongoDB Atlas connection string
+# Still need to configure new MongoDB Atlas cluster
 MONGODB_CONNECTION_STRING = f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@silov3-1stcluster.m6deilx.mongodb.net/?retryWrites=true&w=majority&appName=SiloV3-1stCluster"
 
 # Connect to MongoDB Atlas

@@ -4,12 +4,12 @@ import psutil
 
 # Function to check if the lock file exists
 def check_lock_file():
-    lock_file = "/tmp/silov2_daemon.lock"
+    lock_file = "/tmp/silov3_daemon.lock"
     return os.path.exists(lock_file)
 
 # Function to check if the process is running
 def check_process():
-    lock_file = "/tmp/silov2_daemon.lock"
+    lock_file = "/tmp/silov3_daemon.lock"
     if not os.path.exists(lock_file):
         return False
     with open(lock_file, "r") as f:

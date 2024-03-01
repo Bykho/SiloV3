@@ -1,8 +1,7 @@
 import os
 import shutil
 import json
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../CA')))
-from classifier import run_classification
+from ..CA.classifier import run_classification
 from datetime import datetime
 from multiprocessing import Pool
 
