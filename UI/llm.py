@@ -9,12 +9,16 @@ from PyQt5.QtCore import Qt, QTimer, QStringListModel
 from PyQt5.QtGui import QFont, QIcon, QOpenGLContext, QPixmap, QImage, QColor, QPainter
 from PyQt5.QtWidgets import (QSplitter, QApplication, QFrame, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QComboBox, QCompleter, QHBoxLayout, QStackedLayout, QOpenGLWidget, QScrollArea, QGridLayout)
 
+#from ..misc.config import OPENAI_API_KEY, ASSISTANT_ID
+OPENAI_API_KEY = "sk-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"
+ASSISTANT_ID = "asst_IYTjEetTeZYOQfZe3AL8AemY"
+
 PM = None
 blues = [[0.0, 0.569, 0.996], [0.0, 0.216, 0.9], [0.0, 0.255, 0.780]] 
 oranges = [[1, 0.376, 0],[1, 0.271, 0], [0.929, 0.404, 0]]
 greens = [[0.0, 1.0, 0.0], [0.0, 0.8, 0.0], [0.0, 0.6, 0.0]]
 
-style = 'green' #enter blue green or orange
+style = 'orange' #enter blue green or orange
 
 def load_and_process_gif(filename):
     with open(filename, 'rb') as file:
@@ -366,8 +370,56 @@ class SimpleApp(QWidget):
         imageGridLayout.setSpacing(2)  # Reduce the spacing to make images closer together
         imageGridLayout.setContentsMargins(2, 2, 2, 2)  # Reduce overall grid margin
         image_path = 'file.png'
-        positions = [(i, j) for i in range(4) for j in range(4)]
+
+        file_count, file_data = read_data_json(data.json)
+        positions = turn_file_count_to_grid(file_count)
+        desktop_data = apply_file_data(file_data, positions)
         originalImage = QImage(image_path)
+
+        def read_data_json(data):
+            #accepts data.json
+            #run through the json file incrementing count
+            #run through json extracting sub-detail and appending to a a results list
+            file_count = 0
+            file_data = []
+            for file in data:
+                file_count += 1
+                file_data.append(file.flatten()[1:])
+            
+            return file_count, file_data
+        
+        def apply_file_data(file_data, positions):
+            Desktop = []
+            file_data_index = 0
+
+            #Check how indexing works here
+            for i, val in enumerate(range(len(positions))):
+                Desktop.append([])
+                for j in range(len(positions)):
+                    Desktop[i].append(file_data[file_data_index])
+                    file_data_index += 1
+            return Desktop
+        
+        def turn_file_count_to_grid(count):
+
+            if count < 5:
+                side = int(np.log(count))
+                locations = [(i, j) for i in range(side) for j in range(side)]
+                #check indices and zero indexing here
+                while len(locations) * len(locations[0]) < count:
+                    locations.append([(len(locations), j) for j in range(side)])
+
+            else:
+                width = 4
+                if count%width == 0:
+                    depth = count / width
+                else:
+                    depth = int(count/width) + 1
+                locations = [(i, j) for i in range(width) for j in range(depth)]
+            
+            return locations
+
+        
 
         # Tint the image based on style
         if style == 'blue':
@@ -380,6 +432,9 @@ class SimpleApp(QWidget):
         for pos in positions:
             label = QLabel()
             pixmap = QPixmap.fromImage(tintedImage)
+
+            #here we can add the descriptions
+
             label.setPixmap(pixmap)
             label.setAlignment(Qt.AlignCenter)
             label.setStyleSheet("background: transparent; border: none;")  # Remove boxes around images
@@ -403,8 +458,8 @@ class SimpleApp(QWidget):
 
     def callGPT(self, user_prompt):
         # Securely set your OpenAI API key
-        client = OpenAI(api_key='sk-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')
-        assistant = client.beta.assistants.retrieve(assistant_id='asst_IYTjEetTeZYOQfZe3AL8AemY')
+        client = OpenAI(api_key= OPENAI_API_KEY )
+        assistant = client.beta.assistants.retrieve(assistant_id= ASSISTANT_ID)
         thread = client.beta.threads.create()
         message = client.beta.threads.messages.create(
             thread_id=thread.id,

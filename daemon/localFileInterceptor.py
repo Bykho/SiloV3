@@ -142,7 +142,7 @@ def main():
     observer.start()
 
 
-    #LINK UP THE SILO DOT DISPLAY WITH BELOW.
+    #Spin up UI below
     try:
         display_process = subprocess.Popen(["python3", os.path.join(os.path.dirname(__file__), "display.py")])
 
