@@ -12,13 +12,15 @@ from PyQt5.QtWidgets import (QSplitter, QApplication, QFrame, QWidget, QVBoxLayo
 #from ..misc.config import OPENAI_API_KEY, ASSISTANT_ID
 OPENAI_API_KEY = "sk-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"
 ASSISTANT_ID = "asst_IYTjEetTeZYOQfZe3AL8AemY"
+dataJson = "..SH/data.json"
+
 
 PM = None
 blues = [[0.0, 0.569, 0.996], [0.0, 0.216, 0.9], [0.0, 0.255, 0.780]] 
 oranges = [[1, 0.376, 0],[1, 0.271, 0], [0.929, 0.404, 0]]
 greens = [[0.0, 1.0, 0.0], [0.0, 0.8, 0.0], [0.0, 0.6, 0.0]]
 
-style = 'orange' #enter blue green or orange
+style = 'green' #enter blue green or orange
 
 def load_and_process_gif(filename):
     with open(filename, 'rb') as file:
@@ -187,7 +189,6 @@ class OpenGLWidget(QOpenGLWidget):
             PM = pixel_map
             return pixel_map
 
-
     def initialize_grid(self, width, height, pixel_map):
         randomgrid = np.random.choice([0, 1], (width, height))
         randomgrid = np.random.choice([0, 1], size=(width, height), p=[.95, .05])
@@ -326,6 +327,9 @@ class SimpleApp(QWidget):
         self.initializeUI()
 
     def initializeUI(self):
+
+        #Read_data_json is meant to take the data.json, count the files, and append
+        #the file and its sub-details to a list.
         def read_data_json(data):
             #accepts data.json
             #run through the json file incrementing count
@@ -334,21 +338,27 @@ class SimpleApp(QWidget):
             file_data = []
             for file in data:
                 file_count += 1
-                file_data.append(file.flatten()[1:])
-            
+                file_data.append(file)
             return file_count, file_data
         
         def apply_file_data(file_data, positions):
             Desktop = []
             file_data_index = 0
 
-            #Check how indexing works here
             for i, val in enumerate(range(len(positions))):
                 Desktop.append([])
                 for j in range(len(positions)):
-                    Desktop[i].append(file_data[file_data_index])
-                    file_data_index += 1
+                    # Add print statements for debugging
+                    print("file_data_index:", file_data_index)
+                    print("len(file_data):", len(file_data))
+                    if file_data_index < len(file_data):  # Ensure index is within bounds
+                        Desktop[i].append(file_data[file_data_index])
+                        file_data_index += 1
+                    else:
+                        print("Index out of range!")
+                        break
             return Desktop
+
         
         def turn_file_count_to_grid(count):
 
@@ -414,7 +424,7 @@ class SimpleApp(QWidget):
         imageGridLayout.setContentsMargins(2, 2, 2, 2)  # Reduce overall grid margin
         image_path = 'file.png'
 
-        file_count, file_data = read_data_json(data.json)
+        file_count, file_data = read_data_json(dataJson)
         positions = turn_file_count_to_grid(file_count)
         desktop_data = apply_file_data(file_data, positions)
         originalImage = QImage(image_path)

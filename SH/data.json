@@ -1,0 +1,18 @@
+{
+    "passtest1.jpeg": {
+        "classification_result": "USA passport",
+        "creation_time": "2024-03-22 13:04:45"
+    },
+    "S13.jpg": {
+        "classification_result": "S1",
+        "creation_time": "2024-03-22 13:04:48"
+    },
+    "S11.jpg": {
+        "classification_result": "S1",
+        "creation_time": "2024-03-22 13:04:51"
+    },
+    "passtest2.jpeg": {
+        "classification_result": "USA passport",
+        "creation_time": "2024-03-22 13:05:01"
+    }
+}

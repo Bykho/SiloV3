@@ -25,19 +25,19 @@ def ocr_image(image_path):
         
         # Perform OCR on the preprocessed image
         text = pytesseract.image_to_string(processed_image)
-        print(text)
+        #print(text)
         return text
     except Exception as e:
-        print(f"Error processing {image_path}: {e}")
+        #print(f"Error processing {image_path}: {e}")
         return ""
 
 def perform_ocr(file_path):
     if not os.path.exists(file_path):
-        print(f"File {file_path} does not exist.")
+        #print(f"File {file_path} does not exist.")
         return ""
 
     if not file_path.lower().endswith(('.jpg', '.jpeg', '.png')):
-        print(f"File {file_path} is not a supported image format.")
+        #print(f"File {file_path} is not a supported image format.")
         return ""
     return ocr_image(file_path)
 
@@ -53,9 +53,9 @@ def main(input_directory):
             ocr_result = perform_ocr(image_path)
             
             # Display the OCR result
-            print(f"OCR Result for {filename}:")
-            print(ocr_result)
-            print("=" * 50)  # Separator for clarity
+            #print(f"OCR Result for {filename}:")
+            #print(ocr_result)
+            #print("=" * 50)  # Separator for clarity
 
 if __name__ == "__main__":
     input_directory = os.path.join(os.path.expanduser("~/Desktop"), "SiloV3/SH")
