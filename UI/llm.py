@@ -326,6 +326,49 @@ class SimpleApp(QWidget):
         self.initializeUI()
 
     def initializeUI(self):
+        def read_data_json(data):
+            #accepts data.json
+            #run through the json file incrementing count
+            #run through json extracting sub-detail and appending to a a results list
+            file_count = 0
+            file_data = []
+            for file in data:
+                file_count += 1
+                file_data.append(file.flatten()[1:])
+            
+            return file_count, file_data
+        
+        def apply_file_data(file_data, positions):
+            Desktop = []
+            file_data_index = 0
+
+            #Check how indexing works here
+            for i, val in enumerate(range(len(positions))):
+                Desktop.append([])
+                for j in range(len(positions)):
+                    Desktop[i].append(file_data[file_data_index])
+                    file_data_index += 1
+            return Desktop
+        
+        def turn_file_count_to_grid(count):
+
+            if count < 5:
+                side = int(np.log(count))
+                locations = [(i, j) for i in range(side) for j in range(side)]
+                #check indices and zero indexing here
+                while len(locations) * len(locations[0]) < count:
+                    locations.append([(len(locations), j) for j in range(side)])
+
+            else:
+                width = 4
+                if count%width == 0:
+                    depth = count / width
+                else:
+                    depth = int(count/width) + 1
+                locations = [(i, j) for i in range(width) for j in range(depth)]
+            
+            return locations
+
         self.setWindowTitle('Desktop GPT')
         self.setGeometry(0, 0, 1200, 600)  # Increased width to accommodate OpenGL widget
         self.setStyleSheet(STYLESHEETS[style])
@@ -376,51 +419,6 @@ class SimpleApp(QWidget):
         desktop_data = apply_file_data(file_data, positions)
         originalImage = QImage(image_path)
 
-        def read_data_json(data):
-            #accepts data.json
-            #run through the json file incrementing count
-            #run through json extracting sub-detail and appending to a a results list
-            file_count = 0
-            file_data = []
-            for file in data:
-                file_count += 1
-                file_data.append(file.flatten()[1:])
-            
-            return file_count, file_data
-        
-        def apply_file_data(file_data, positions):
-            Desktop = []
-            file_data_index = 0
-
-            #Check how indexing works here
-            for i, val in enumerate(range(len(positions))):
-                Desktop.append([])
-                for j in range(len(positions)):
-                    Desktop[i].append(file_data[file_data_index])
-                    file_data_index += 1
-            return Desktop
-        
-        def turn_file_count_to_grid(count):
-
-            if count < 5:
-                side = int(np.log(count))
-                locations = [(i, j) for i in range(side) for j in range(side)]
-                #check indices and zero indexing here
-                while len(locations) * len(locations[0]) < count:
-                    locations.append([(len(locations), j) for j in range(side)])
-
-            else:
-                width = 4
-                if count%width == 0:
-                    depth = count / width
-                else:
-                    depth = int(count/width) + 1
-                locations = [(i, j) for i in range(width) for j in range(depth)]
-            
-            return locations
-
-        
-
         # Tint the image based on style
         if style == 'blue':
             tintedImage = self.tintImage(originalImage, QColor(0, 80, 255))  
@@ -429,11 +427,12 @@ class SimpleApp(QWidget):
         elif style == 'green':
             tintedImage = self.tintImage(originalImage, QColor(57, 255, 20))  
 
+        #I should for loop through desktop data and iterate the pointer through Desktop Data.
         for pos in positions:
             label = QLabel()
             pixmap = QPixmap.fromImage(tintedImage)
 
-            #here we can add the descriptions
+            #here we can add the descriptions by pulling from the desktop_data file.
 
             label.setPixmap(pixmap)
             label.setAlignment(Qt.AlignCenter)
