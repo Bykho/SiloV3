@@ -1,5 +1,8 @@
 import sys
+import os
+import json
 import numpy as np
+from PyQt5.QtWidgets import QLabel
 from openai import OpenAI
 from PIL import Image
 import pickle
@@ -12,7 +15,7 @@ from PyQt5.QtWidgets import (QSplitter, QApplication, QFrame, QWidget, QVBoxLayo
 #from ..misc.config import OPENAI_API_KEY, ASSISTANT_ID
 OPENAI_API_KEY = "sk-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"
 ASSISTANT_ID = "asst_IYTjEetTeZYOQfZe3AL8AemY"
-dataJson = "..SH/data.json"
+dataJson = os.path.join(os.path.expanduser("~/Desktop/SiloV3/SH"), "data.json")
 
 
 PM = None
@@ -20,7 +23,7 @@ blues = [[0.0, 0.569, 0.996], [0.0, 0.216, 0.9], [0.0, 0.255, 0.780]]
 oranges = [[1, 0.376, 0],[1, 0.271, 0], [0.929, 0.404, 0]]
 greens = [[0.0, 1.0, 0.0], [0.0, 0.8, 0.0], [0.0, 0.6, 0.0]]
 
-style = 'green' #enter blue green or orange
+style = 'blue' #enter blue green or orange
 
 def load_and_process_gif(filename):
     with open(filename, 'rb') as file:
@@ -330,16 +333,17 @@ class SimpleApp(QWidget):
 
         #Read_data_json is meant to take the data.json, count the files, and append
         #the file and its sub-details to a list.
-        def read_data_json(data):
-            #accepts data.json
-            #run through the json file incrementing count
-            #run through json extracting sub-detail and appending to a a results list
-            file_count = 0
+        def read_data_json(data_path):
             file_data = []
-            for file in data:
-                file_count += 1
-                file_data.append(file)
-            return file_count, file_data
+            with open(data_path, 'r') as file:
+                data = json.load(file)
+                for filename, info in data.items():
+                    file_info = {'filename': filename, **info}  # Merge filename with its sub-info
+                    file_data.append(file_info)
+
+            print(f"File data (from read_data_json): {file_data}")
+            return file_data
+
         
         def apply_file_data(file_data, positions):
             Desktop = []
@@ -361,23 +365,18 @@ class SimpleApp(QWidget):
 
         
         def turn_file_count_to_grid(count):
-
-            if count < 5:
-                side = int(np.log(count))
-                locations = [(i, j) for i in range(side) for j in range(side)]
-                #check indices and zero indexing here
-                while len(locations) * len(locations[0]) < count:
-                    locations.append([(len(locations), j) for j in range(side)])
-
+            print(f"count: ", count)
+            width = 4
+            if count % width == 0:
+                depth = count // width  # Use integer division to ensure depth is always an integer
             else:
-                width = 4
-                if count%width == 0:
-                    depth = count / width
-                else:
-                    depth = int(count/width) + 1
-                locations = [(i, j) for i in range(width) for j in range(depth)]
-            
+                depth = count // width + 1  # Add 1 to the result of integer division when there's a remainder
+            print(f"count: {count}, width: {width}, depth: {depth}")
+
+            locations = [(i, j) for i in range(width) for j in range(depth)]
+            print(f'locations: {locations}')
             return locations
+
 
         self.setWindowTitle('Desktop GPT')
         self.setGeometry(0, 0, 1200, 600)  # Increased width to accommodate OpenGL widget
@@ -424,8 +423,8 @@ class SimpleApp(QWidget):
         imageGridLayout.setContentsMargins(2, 2, 2, 2)  # Reduce overall grid margin
         image_path = 'file.png'
 
-        file_count, file_data = read_data_json(dataJson)
-        positions = turn_file_count_to_grid(file_count)
+        file_data = read_data_json(dataJson)
+        positions = turn_file_count_to_grid(len(file_data))
         desktop_data = apply_file_data(file_data, positions)
         originalImage = QImage(image_path)
 
@@ -441,13 +440,39 @@ class SimpleApp(QWidget):
         for pos in positions:
             label = QLabel()
             pixmap = QPixmap.fromImage(tintedImage)
-
-            #here we can add the descriptions by pulling from the desktop_data file.
-
             label.setPixmap(pixmap)
             label.setAlignment(Qt.AlignCenter)
             label.setStyleSheet("background: transparent; border: none;")  # Remove boxes around images
             imageGridLayout.addWidget(label, *pos)
+
+
+        print()
+        print("file_data:", file_data)
+        print()
+        
+        # Inside the initializeUI method, after creating the QLabel for each file image
+        for file_info, pos in zip(file_data, positions):
+            filename = file_info['filename']
+            classification_result = file_info['classification_result']
+            creation_time = file_info['creation_time']
+
+            # Load the icon image
+            icon_path = 'file.png'  # Path to your icon image file
+            icon = QPixmap(icon_path)
+
+            # Create a QLabel to display file information
+            info_label = QLabel(self)
+            info_label.setAlignment(Qt.AlignCenter)
+            info_label.setStyleSheet("color: white;")  # Set text color to white
+            
+            # Set icon and text
+            info_label.setPixmap(icon)  # Set the icon pixmap
+            info_label.setText(f"{filename}\n{classification_result}\n{creation_time}")
+
+            imageGridLayout.addWidget(info_label, pos[0], pos[1])  # Add the info_label to the grid layout
+
+        
+
 
         # Widget to hold the grid layout
         imageGridWidget = QWidget()
